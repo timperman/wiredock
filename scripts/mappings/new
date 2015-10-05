@@ -47,7 +47,6 @@ if [ "$1" != "" ]; then
 fi
 
 DATA=$DATA' } }'
+DATA="'"$DATA"'"
 
-echo $DATA
-
-curl -i -X POST --data '$DATA' http://localhost:8080/__admin/mappings/new
+echo $DATA | curl -i -X POST --data @- http://localhost:8080/__admin/mappings/new
