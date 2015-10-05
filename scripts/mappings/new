@@ -1,0 +1,53 @@
+#!/bin/sh
+
+METHOD="GET"
+PATTERN=".*"
+URL=""
+BODY=""
+BODY_VALUE=""
+PROXY=""
+STATUS="200"
+
+OPTIND=1
+while getopts "m:p:u:b:v:x:s:" opt; do
+  case $opt in
+    m) METHOD="$OPTARG" ;;
+    p) PATTERN="$OPTARG" ;;
+    u) URL="$OPTARG" ;;
+    b) BODY="$OPTARG" ;;
+    v) BODY_VALUE="$OPTARG" ;;
+    x) PROXY="$OPTARG" ;;
+    s) STATUS="$OPTARG" ;;
+    \?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
+  esac
+done
+shift $((OPTIND-1))
+
+echo $URL
+DATA='{ "request": { "method": "'$METHOD'"'
+if [ "$URL" != "" ]; then
+  DATA=$DATA', "url": "'$URL'"'
+else
+  DATA=$DATA', "urlPattern": "'$PATTERN'"'
+fi
+
+if [ "$PROXY" != "" ]; then
+  DATA=$DATA' }, "response": { "proxyBaseUrl": "'$PROXY'"'
+else
+  DATA=$DATA' }, "response": { "status": '$STATUS
+  case $BODY in
+    plain)  DATA=$DATA', "body": "'$BODY_VALUE'"' ;;
+    file)   DATA=$DATA', "bodyFileName": "'$BODY_VALUE'"' ;;
+    base64) DATA=$DATA', "bodyBase64": "'$BODY_VALUE'"' ;;
+  esac
+fi
+
+if [ "$1" != "" ]; then
+  DATA=$DATA', '$1
+fi
+
+DATA=$DATA' } }'
+
+echo $DATA
+
+curl -i -X POST --data '$DATA' http://localhost:8080/mappings/new
