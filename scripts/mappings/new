@@ -50,4 +50,4 @@ DATA=$DATA' } }'
 
 echo $DATA
 
-curl -i -X POST --data '$DATA' http://localhost:8080/mappings/new
+curl -i -X POST --data '$DATA' http://localhost:8080/__admin/mappings/new

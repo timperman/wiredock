@@ -1,3 +1,3 @@
 #!/bin/sh
 
-curl -i -X POST --data '{}' http://localhost:8080/mappings/save
+curl -i -X POST --data '{}' http://localhost:8080/__admin/mappings/save
